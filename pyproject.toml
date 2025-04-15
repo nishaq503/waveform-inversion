@@ -1,0 +1,18 @@
+[project]
+name = "waveform-inversion"
+version = "0.1.0"
+description = "Physics-guided machine learning models to solve full-waveform inversion problems"
+readme = "README.md"
+authors = [
+    { name = "Najib Ishaq", email = "najib_ishaq@zoho.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "kaggle>=1.7.4.2",
+    "numpy>=2.2.4",
+    "torch>=2.6.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
