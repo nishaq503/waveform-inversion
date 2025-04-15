@@ -1,9 +1,9 @@
 #!/usr/bin/env -S uv run --script
-# 
+#
 # This script allows you perform some exploratory data analysis (EDA) on the
 # data from the corresponding Kaggle competition. To run this script, you need
 # to install `uv` and make this script executable.
-# 
+#
 # ## Usage
 #
 # ```bash
