@@ -63,7 +63,9 @@ class DumbNet(nn.Module):
             self,
             pool_size: tuple[int, int] = (8, 2),
             input_size: int = 5 * 1000 * 70,
-            hidden_size: int = 70 * 70,
+            hs1: int = 540 * 70,
+            hs2: int = 280 * 70,
+            hs3: int = 140 * 70,
             output_size: int = 70 * 70,
         ):
         """Initialize the DumbNet model.
@@ -79,15 +81,19 @@ class DumbNet(nn.Module):
         self.pool = nn.AvgPool2d(kernel_size=pool_size)
 
         self.model = nn.Sequential(
-            nn.Linear(input_size // (pool_size[0] * pool_size[1]), hidden_size),
+            nn.Linear(input_size // (pool_size[0] * pool_size[1]), hs1),
 
             nn.ReLU(),
-            nn.Dropout(0.25),
-            nn.Linear(hidden_size, hidden_size),
+            nn.Dropout(0.5),
+            nn.Linear(hs1, hs2),
 
             nn.ReLU(),
-            nn.Dropout(0.25),
-            nn.Linear(hidden_size, output_size),
+            nn.Dropout(0.5),
+            nn.Linear(hs2, hs3),
+
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(hs3, output_size),
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
