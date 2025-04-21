@@ -1,38 +1,37 @@
 """Physics-guided ML models to solve full-waveform inversion problems."""
 
-import pathlib
-import dotenv
+import logging
 
-dotenv.load_dotenv()
+from . import utils
+from . import data
+
+utils.seed_all()
+logger = utils.make_logger("waveform_inversion", level=utils.ENV_VARS["LOG_LEVEL"])
 
 
-def hello():
+def main():
     """List all environment variables loaded by dotenv."""
-    dotenv_vars = handle_dotenv()
 
-    print(f"Loaded environment {len(dotenv_vars)} variables:")
-    for key, value in dotenv_vars.items():
-        print(f"  {key}: {value}")
+    # Add formatting to the logger
+    logging.basicConfig(
+        level=utils.ENV_VARS["LOG_LEVEL"],
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
 
+    logger.debug("Debugging information.")
+    logger.info("Logger initialized.")
+    logger.warning("Warning message.")
+    logger.error("Error message.")
+    logger.critical("Critical message.")
 
-def handle_dotenv() -> dict[str, str]:
-    """Handle the .env file for the package."""
-    dotenv_vars = dotenv.dotenv_values()
+    # Print the environment variables loaded by dotenv
+    logger.info(f"Loaded environment {len(utils.ENV_VARS)} variables:")
+    for key, value in utils.ENV_VARS.items():
+        logger.info(f"  {key}: {value}")
 
-    if not (dotenv_vars and len(dotenv_vars) > 0):
-        raise ValueError(
-            "No environment variables loaded. Please check if the .env file exists."
-        )
-
-    # Some variables' names start with "DATA" and their values are relative to ~/Documents/kaggle. Convert them to absolute paths.
-    for key, value in dotenv_vars.items():
-        if key.startswith("DATA") and not value.startswith("/"):
-            path = pathlib.Path.home() / "Documents" / "kaggle" / value
-            dotenv_vars[key] = str(path.resolve())
-
-    # Write the updated variables to the .env file
-    with open(".env", "w") as f:
-        for key, value in dotenv_vars.items():
-            f.write(f"{key}={value}\n")
-
-    return dotenv_vars
+    io_paths = data.get_train_paths()
+    logger.info(f"Found {len(io_paths)} input/output paths.")
+    for inp_path, out_path in io_paths:
+        logger.debug(f"Input path: {inp_path}")
+        logger.debug(f"Output path: {out_path}")

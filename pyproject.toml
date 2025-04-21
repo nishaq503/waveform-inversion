@@ -23,7 +23,7 @@ dev = [
 ]
 
 [project.scripts]
-hello = "waveform_inversion:hello"
+example = "waveform_inversion:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -31,3 +31,15 @@ build-backend = "hatchling.build"
 
 [tool.hatch.version]
 path = "src/waveform_inversion/__about__.py"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 121
+
+[tool.ruff.lint.isort]
+case-sensitive = true
+force-single-line = true
+
+[tool.ruff.lint.mccabe]
+# Flag errors (`C901`) whenever the complexity level exceeds 10.
+max-complexity = 10
