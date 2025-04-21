@@ -41,6 +41,7 @@ def handle_dotenv(path: pathlib.Path) -> dict[str, str]:
 ENV_VARS = handle_dotenv((pathlib.Path(__file__).parents[2] / ".env").resolve())
 DATA_INP_DIR = pathlib.Path(ENV_VARS["DATA_INP_DIR"])
 DATA_WORK_DIR = pathlib.Path(ENV_VARS["DATA_WORK_DIR"])
+DATA_OUT_DIR = pathlib.Path(ENV_VARS["DATA_OUT_DIR"])
 LOG_LEVEL = ENV_VARS["LOG_LEVEL"]
 
 
