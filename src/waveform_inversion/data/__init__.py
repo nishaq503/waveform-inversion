@@ -2,12 +2,12 @@
 
 from .seismic_dataset import SeismicDataset
 from .test_dataset import TestDataset
-from .utils import get_train_paths, train_test_split
+from .utils import get_train_paths, train_valid_split
 
 
 __all__ = [
     "SeismicDataset",
     "TestDataset",
     "get_train_paths",
-    "train_test_split",
+    "train_valid_split",
 ]

@@ -4,14 +4,14 @@ import pathlib
 import random
 import typing
 
-from waveform_inversion.utils import DATA_INP_DIR, LOG_LEVEL, make_logger
+from waveform_inversion.utils import LOG_LEVEL, make_logger
 
 logger = make_logger(__name__, level=LOG_LEVEL)
 
 T = typing.TypeVar("T")
 
 
-def get_train_paths() -> list[tuple[pathlib.Path, pathlib.Path]]:
+def get_train_paths(inp_dir: pathlib.Path) -> list[tuple[pathlib.Path, pathlib.Path]]:
     """Get the paths to the training data files."""
     path_pairs = [
         (
@@ -19,7 +19,7 @@ def get_train_paths() -> list[tuple[pathlib.Path, pathlib.Path]]:
             pathlib.Path(str(p).replace('seis', 'vel').replace('data', 'model'))
         )
         for p in
-        (DATA_INP_DIR / "train_samples").rglob("*.npy")
+        (inp_dir / "train_samples").rglob("*.npy")
         if ("seis" in p.stem) or ("data" in p.stem)
     ]
 
@@ -37,26 +37,26 @@ def get_train_paths() -> list[tuple[pathlib.Path, pathlib.Path]]:
     return path_pairs
 
 
-def train_test_split(values: list[T], test_frac: float) -> tuple[list[T], list[T]]:
-    """Split a list into a training and test set."""
-    if not (0 < test_frac < 1):
-        raise ValueError("`test_frac` must be between 0 and 1")
+def train_valid_split(values: list[T], valid_frac: float) -> tuple[list[T], list[T]]:
+    """Split a list into training and validation sets."""
+    if not (0 < valid_frac < 1):
+        raise ValueError("`valid_frac` must be between 0 and 1")
 
     # Shuffle the values
     random.shuffle(values)
 
     # Calculate the split index
-    split_idx = int(len(values) * (1 - test_frac))
+    split_idx = int(len(values) * (1 - valid_frac))
 
     # Split the values
     train_values = values[:split_idx]
     test_values = values[split_idx:]
 
-    logger.debug(f"Split {len(values)} values into {len(train_values)} training and {len(test_values)} test values.")
+    logger.debug(f"Split {len(values)} items into {len(train_values)} training and {len(test_values)} validation items.")
     return train_values, test_values
 
 
 __all__ = [
     "get_train_paths",
-    "train_test_split",
+    "train_valid_split",
 ]

@@ -1,6 +1,7 @@
 """Physics-guided ML models to solve full-waveform inversion problems."""
 
 from . import data
+from . import eda
 from . import models
 from .utils import (
     ENV_VARS,
@@ -15,6 +16,7 @@ from .utils import (
 
 __all__ = [
     "data",
+    "eda",
     "models",
     "ENV_VARS",
     "DATA_INP_DIR",
