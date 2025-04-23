@@ -8,8 +8,8 @@ from torch import nn
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 
-import waveform_inversion.utils as wi_utils
 import waveform_inversion.data as wi_data
+import waveform_inversion.utils as wi_utils
 from .dumb_net import DumbNet
 from .train import train
 

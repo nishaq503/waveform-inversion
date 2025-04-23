@@ -7,17 +7,18 @@ import typer
 
 from typing_extensions import Annotated
 
-import waveform_inversion as wi
+import waveform_inversion.eda as wi_eda
 import waveform_inversion.models as wi_models
+import waveform_inversion.utils as wi_utils
 
-wi.seed_all()
+wi_utils.seed_all()
 
-logger = wi.make_logger("waveform_inversion", level=wi.LOG_LEVEL)
+logger = wi_utils.make_logger("waveform_inversion", level=wi_utils.LOG_LEVEL)
 
 # Add formatting to the logger
 logging.basicConfig(
-    filename=wi.LOG_FILE,
-    level=wi.LOG_LEVEL,
+    filename=wi_utils.LOG_FILE,
+    level=wi_utils.LOG_LEVEL,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
@@ -39,7 +40,7 @@ def main(
         dir_okay=True,
         readable=True,
         resolve_path=True,
-    )] = wi.DATA_INP_DIR,
+    )] = wi_utils.DATA_INP_DIR,
     work_dir: Annotated[pathlib.Path, typer.Option(
         "--work-dir",
         "-w",
@@ -49,7 +50,7 @@ def main(
         dir_okay=True,
         writable=True,
         resolve_path=True,
-    )] = wi.DATA_WORK_DIR,
+    )] = wi_utils.DATA_WORK_DIR,
     out_dir: Annotated[pathlib.Path, typer.Option(
         "--out-dir",
         "-o",
@@ -59,7 +60,7 @@ def main(
         dir_okay=True,
         writable=True,
         resolve_path=True,
-    )] = wi.DATA_OUT_DIR,
+    )] = wi_utils.DATA_OUT_DIR,
     n_epochs: Annotated[int, typer.Option(
         "--n-epochs",
         "-e",
@@ -99,12 +100,15 @@ def main(
         logger.info(f"Using existing models directory: {models_dir}")
 
     # Print the environment variables loaded by dotenv
-    logger.info(f"Loaded environment {len(wi.ENV_VARS)} variables:")
-    for key, value in wi.ENV_VARS.items():
+    logger.info(f"Loaded environment {len(wi_utils.ENV_VARS)} variables:")
+    for key, value in wi_utils.ENV_VARS.items():
         logger.info(f"  {key}: {value}")
 
     if eda:
-        pass
+        wi_eda.explore(
+            inp_dir=inp_dir,
+            work_dir=work_dir,
+        )
     else:
         wi_models.train_and_test(
             inp_dir=inp_dir,

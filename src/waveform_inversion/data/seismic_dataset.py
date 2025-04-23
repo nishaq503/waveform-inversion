@@ -23,7 +23,7 @@ class SeismicDataset(Dataset):
         """Return the total number of examples in the dataset."""
         return len(self.inputs_files) * self.n_examples_per_file
 
-    def __getitem__(self, idx: int):
+    def __getitem__(self, idx: int) -> tuple[numpy.ndarray, numpy.ndarray]:
         """Get the seismic data and corresponding label.
 
         Args:
