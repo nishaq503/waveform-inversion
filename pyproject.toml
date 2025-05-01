@@ -4,29 +4,43 @@ dynamic = ["version"]
 description = "Physics-guided machine learning models to solve full-waveform inversion problems"
 readme = "README.md"
 authors = [
-    { name = "Najib Ishaq", email = "najib_ishaq@zoho.com" }
+  { name = "Najib Ishaq", email = "najib_ishaq@zoho.com" }
 ]
 requires-python = ">=3.10.12"
 dependencies = [
-    "dotenv>=0.9.9",
-    "einops>=0.8.1",
-    "matplotlib>=3.10.1",
-    "numpy>=2.2.4",
-    "seaborn>=0.13.2",
-    "torch>=2.6.0",
-    "torchsummary>=1.5.1",
-    "tqdm>=4.67.1",
-    "typer>=0.15.2",
-    "typing-extensions>=4.13.2",
+  "dotenv>=0.9.9",
+  "einops>=0.8.1",
+  "matplotlib>=3.10.1",
+  "numpy>=2.2.4",
+  "seaborn>=0.13.2",
+  "torch>=2.7.0",
+  "torchsummary>=1.5.1",
+  "torchvision>=0.22.0",
+  "tqdm>=4.67.1",
+  "typer>=0.15.2",
+  "typing-extensions>=4.13.2",
 ]
 
 [dependency-groups]
 dev = [
-    "mypy>=1.15.0",
-    "pip>=25.0.1",
-    "pre-commit>=4.2.0",
-    "ruff>=0.11.5",
+  "mypy>=1.15.0",
+  "pip>=25.0.1",
+  "pre-commit>=4.2.0",
+  "ruff>=0.11.5",
 ]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu128", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+torchvision = [
+  { index = "pytorch-cu128", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
 
 [build-system]
 requires = ["hatchling"]
