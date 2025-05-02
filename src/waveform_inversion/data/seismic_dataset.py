@@ -5,6 +5,10 @@ import pathlib
 import numpy
 from torch.utils.data import Dataset
 
+import waveform_inversion.utils as wi_utils
+
+logger = wi_utils.make_logger(__name__)
+
 
 class SeismicDataset(Dataset):
     """A dataset for the seismic waveform inversion task."""
@@ -40,7 +44,10 @@ class SeismicDataset(Dataset):
         train_y: numpy.ndarray = numpy.load(self.output_files[file_idx], mmap_mode='r')
 
         try:
-            return train_x[sample_idx].copy(), train_y[sample_idx].copy()
+            x, y = train_x[sample_idx].copy(), train_y[sample_idx].copy()
+            # Take only every other time-step from the x
+            # x = x[:, ::2, :]
+            return x, y
         finally:
             del train_x, train_y
 

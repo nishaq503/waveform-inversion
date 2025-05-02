@@ -44,6 +44,7 @@ DATA_WORK_DIR = pathlib.Path(ENV_VARS["DATA_WORK_DIR"])
 DATA_OUT_DIR = pathlib.Path(ENV_VARS["DATA_OUT_DIR"])
 LOG_LEVEL = ENV_VARS["LOG_LEVEL"]
 LOG_FILE = ENV_VARS["LOG_FILE"]
+# PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True,max_split_size_mb:32"
 
 
 def make_logger(name: str, level: str = LOG_LEVEL) -> logging.Logger:

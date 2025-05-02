@@ -46,6 +46,9 @@ def train(
 
     model = model.to(device)
 
+    logger.info("Model summary:")
+    logger.info(model)
+
     history: dict[str, list[float]] = {
         "train_loss": [],
         "valid_loss": [],

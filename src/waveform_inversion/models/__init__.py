@@ -66,23 +66,27 @@ def train_and_test(
     final_model_path = out_dir / "final_model.pth"
     logger.info(f"Final model path: {final_model_path}")
 
+    batch_size = 64
+    pin_memory = True
+    num_workers = 24
+
     if not final_model_path.exists() or retrain:
         dl_train = DataLoader(
             wi_data.SeismicDataset(train_paths),
-            batch_size=64,
+            batch_size=batch_size,
             shuffle=True,
-            pin_memory=True,
+            pin_memory=pin_memory,
             drop_last=True,
-            num_workers=10,
+            num_workers=num_workers,
             persistent_workers=True,
         )
         dl_valid = DataLoader(
             wi_data.SeismicDataset(valid_paths),
-            batch_size=64,
+            batch_size=batch_size,
             shuffle=False,
-            pin_memory=True,
+            pin_memory=pin_memory,
             drop_last=False,
-            num_workers=10,
+            num_workers=num_workers,
             persistent_workers=True,
         )
 

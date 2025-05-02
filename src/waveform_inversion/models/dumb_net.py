@@ -9,63 +9,19 @@ import waveform_inversion.utils as wi_utils
 logger = wi_utils.make_logger(__name__)
 
 
-class ResidualBlock(nn.Module):
-    """A residual block with optional downsampling.
-
-    Args:
-        in_channels: Number of input channels.
-        out_channels: Number of output channels.
-        downsample: Whether to downsample the input. Default is False.
-    """
-    def __init__(self, in_channels: int, out_channels: int, device: torch.device, downsample: bool = False):
-        super().__init__()
-        stride = 2 if downsample else 1
-
-        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1, stride=stride, device=device)
-        self.bn1 = nn.BatchNorm2d(out_channels, device=device)
-        self.relu = nn.ReLU(inplace=True)
-
-        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1, device=device)
-        self.bn2 = nn.BatchNorm2d(out_channels, device=device)
-
-        self.downsample = None
-        if downsample or in_channels != out_channels:
-            self.downsample = nn.Sequential(
-                nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride, device=device),
-                nn.BatchNorm2d(out_channels, device=device)
-            )
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass for the residual block.
-
-        Args:
-            x: Input tensor.
-
-        Returns:
-            Output tensor after applying the residual block.
-        """
-        identity = x
-
-        out = self.relu(self.bn1(self.conv1(x)))
-        out = self.bn2(self.conv2(out))
-
-        if self.downsample is not None:
-            identity = self.downsample(identity)
-
-        out += identity
-        return self.relu(out)
-
-
 class DumbNet(nn.Module):
-    """A deep CNN with residual blocks and a dense classifier.
+    """An MLP model for the waveform inversion task.
     """
     def __init__(
             self,
-            pool_size: tuple[int, int] = (8, 2),
+            pool_size: tuple[int, int] = (10, 2),
             input_size: int = 5 * 1000 * 70,
-            hs1: int = 540 * 70,
-            hs2: int = 280 * 70,
-            hs3: int = 140 * 70,
+            hidden_sizes: list[int] = [
+                256 * 70,
+                196 * 70,
+                128 * 70,
+                98 * 70,
+            ],
             output_size: int = 70 * 70,
         ):
         """Initialize the DumbNet model.
@@ -79,22 +35,20 @@ class DumbNet(nn.Module):
         super().__init__()
 
         self.pool = nn.AvgPool2d(kernel_size=pool_size)
+        in_size = input_size // (pool_size[0] * pool_size[1])
+        dropout_rate = 0.5
 
-        self.model = nn.Sequential(
-            nn.Linear(input_size // (pool_size[0] * pool_size[1]), hs1),
+        layers = [nn.Linear(in_size, hidden_sizes[0])]
+        for hs_in, hs_out in zip(hidden_sizes[:-1], hidden_sizes[1:]):
+            layers.append(nn.ReLU())
+            layers.append(nn.Dropout(dropout_rate))
+            layers.append(nn.Linear(hs_in, hs_out))
 
-            nn.ReLU(),
-            nn.Dropout(0.5),
-            nn.Linear(hs1, hs2),
+        layers.append(nn.ReLU())
+        layers.append(nn.Dropout(dropout_rate))
+        layers.append(nn.Linear(hidden_sizes[-1], output_size))
 
-            nn.ReLU(),
-            nn.Dropout(0.5),
-            nn.Linear(hs2, hs3),
-
-            nn.ReLU(),
-            nn.Dropout(0.5),
-            nn.Linear(hs3, output_size),
-        )
+        self.model = nn.Sequential(*layers)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass for the DumbNet model.
